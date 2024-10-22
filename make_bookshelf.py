@@ -26,8 +26,14 @@ class Door:
         res += r"\draw ({},{}) rectangle ({},{});".format(i, i, w-i, h-i) + "\n"
         if self.doornob_side == "left":
             res += r"\draw ({}, {}) circle ({});".format(w - i/2, h/2, r)
+        if self.doornob_side == "topleft":
+            res += r"\draw ({}, {}) circle ({});".format(w - i/2,  h - i/2, r)
         elif self.doornob_side == "right":
             res += r"\draw ({}, {}) circle ({});".format(i/2, h/2, r)
+        elif self.doornob_side == "topright":
+            res += r"\draw ({}, {}) circle ({});".format(i/2, h - i/2, r)
+        elif self.doornob_side is None:
+            pass
         else:
             raise ValueError(self.doornob_side)
         return res
@@ -82,27 +88,26 @@ base_height = 720
 counter_height = 50
 counter_overhang = 20
 shelve_width = 20
-shelving_spacing = [500, 300]
-# shelving_height determined by these
+shelving_spacing = [450, 250]
+
 base = [  # right to left
-    Panel(100, base_height),
-    
-    Door(600, base_height, "left"),
-    Door(450, base_height, "left"),
-    Door(450, base_height, "right"),
-    Door(450, base_height, "left"),
-    Door(450, base_height, "right"),
-    Door(600, base_height, "right"),
+    Panel(50, base_height),
+    Door(600, base_height, "topleft"),
+    Door(450, base_height, "topleft"),
+    Door(450, base_height, "topright"),
+    Door(450, base_height, "topleft"),
+    Door(450, base_height, "topright"),
+    Door(600, base_height, "topright"),
 ]
 shelving_height = H - base_height - counter_height - crown_height - skirting_height
 top = [
-    Panel(100, shelving_height),
-    # TODO: add option for changing shelf heights
+    Panel(50, shelving_height),
     Shelves(600, shelving_height, shelving_spacing, 20, closed=None),
     Shelves(900, shelving_height, shelving_spacing, 20, closed=None),
     Shelves(900, shelving_height, shelving_spacing, 20, closed=None),
-    Shelves(600, shelving_height, shelving_spacing, 20, closed="left"),
+    Shelves(600, shelving_height, shelving_spacing, 20, closed=None),
 ]
+
 total_width = sum([b.width for b in base])
 rows = [
     [Panel(total_width + counter_overhang, skirting_height, "white"),],
@@ -112,7 +117,7 @@ rows = [
     [Panel(total_width, crown_height)],
 ]
 
-tex = r"""\documentclass{article}
+tex = r"""\documentclass{standalone}
 \usepackage{tikz}
 
 \begin{document}
